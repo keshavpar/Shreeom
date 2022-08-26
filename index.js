@@ -24,7 +24,7 @@ mongoose.connect(process.env.DB_connection_String)
 
 const Port = 8080
 
-app.listen(Port, '0.0.0.0/0',()=>{
+app.listen(Port,()=>{
     console.log("Listening to no one "+Port)
 })
 
