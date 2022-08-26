@@ -22,7 +22,7 @@ mongoose.connect(process.env.DB_connection_String)
         console.error(`Error connecting to the database. \n${err}`);
     })
 
-const Port = process.env.PORT||5000
+const Port = 5000
 
 app.listen(Port, '0.0.0.0',()=>{
     console.log("Listening to no one "+Port)
