@@ -4,6 +4,7 @@ const Schema = mongoose.Schema
 
 const Patients=new Schema({
     uniqueid:{type:String,default:''},
+    aadharnumber:{type:String,default:''},
     name:{type:String,default:''},
     address:{type:String,default:''},
     fathersname:{type:String,default:''},

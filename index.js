@@ -34,6 +34,18 @@ app.get("/",(req,res)=>{
     res.end()
 })
 
+app.get("/patientnumber",async(req,res)=>{
+    try{
+        var query = patient.find();
+        query.count(function(err,count){
+          res.json({data:count})
+
+        });
+    }
+    catch(err){
+        res.status(500).json({data:[],error:err})
+    }
+})
 //Getting the Patients list
 app.get("/patientlist",async(req,res)=>{
     try{
@@ -68,6 +80,7 @@ app.post("/addmed",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 
 
 //Posting the patients 
