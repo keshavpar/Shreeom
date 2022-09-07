@@ -5,6 +5,7 @@ const Schema = mongoose.Schema
 const Patients=new Schema({
     uniqueid:{type:String,default:''},
     aadharnumber:{type:String,default:''},
+    age:{type:Number,default:20},
     name:{type:String,default:''},
     address:{type:String,default:''},
     fathersname:{type:String,default:''},
@@ -22,6 +23,9 @@ const Patients=new Schema({
     jivha:{type:String,default:''},
     Nadi:{type:String,default:''},
     Date:{type:Date,default:Date.now},
+    totalcap:{type:Number,default:0},
+    captoday:{type:Number,default:0},
+    Startdosage:{type:Number,default:0},
     expectedDate:{type:Date,default:Date.now},
     medicinelist:{type:Array,default:[]},
     price:{type:Array,default:[]},

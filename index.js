@@ -9,8 +9,8 @@ const connectionParams={
 //models
 const medicine= require("./models/medicine")
 const patient  = require("./models/patients")
-
-
+const bill =require("./models/Bill")
+const sale=require("./models/sale")
 const app =express();
 app.use(express.json())
 
@@ -57,6 +57,115 @@ app.get("/patientlist",async(req,res)=>{
     }
 })
 
+//Updating the Bill values
+app.patch('/patientsbillupdate/:id',async(req,res,next)=>{
+    try{
+        const _id=req.params.id;
+        const updates=req.body;
+        const options={new:true}
+        const result = await patient.findByIdAndUpdate(_id,updates,options)
+        result.save()
+        res.send(result);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({data:[],error:error})
+
+    }
+})
+
+//Updating the Bill values
+app.patch('/billupdate/:id',async(req,res,next)=>{
+    try{
+        const _id=req.params.id;
+        const updates=req.body;
+        const options={new:true}
+        const result = await bill.findByIdAndUpdate(_id,updates,options)
+        result.save()
+        res.send(result);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({data:[],error:error})
+
+    }
+})
+
+app.patch('/salesupdate/:id',async(req,res,next)=>{
+    try{
+        const _id=req.params.id;
+        const updates=req.body;
+        const options={new:true}
+        const result = await sale.findByIdAndUpdate(_id,updates,options)
+        result.save()
+        res.send(result);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({data:[],error:error})
+
+    }
+})
+
+//Updating the Sales values
+app.patch('/patientsbillupdate/:id',async(req,res,next)=>{
+    try{
+        const _id=req.params.id;
+        const options={new:true}
+        const result = await patient.findByIdAndUpdate(_id,updates,options)
+        result.save()
+        res.send(result);
+    }
+    catch(error){
+        console.log(error)
+        res.status(500).json({data:[],error:error})
+
+    }
+})
+
+//app get Bill no
+app.get("/billno",async(req,res)=>{
+    try{
+        const billlist=await bill.find()
+        res.json({success:true,data:billlist})
+    }
+    catch(err)
+    {
+        res.status(500).json({data:[],error:err})
+    }
+})
+
+app.post("/bill",async(req,res)=>{
+    try{
+        const addbill=new bill(req.body)
+        await addbill.save()
+        res.json({success:true,data:addbill})
+    }
+    catch(err){
+        res.status(500).json({data:[],error:err})
+    }
+})
+//app get Sales
+app.get("/sales",async(req,res)=>{
+    try{
+        const saleslist=await sale.find()
+        res.json({success:true,data:saleslist})
+    }
+    catch(err)
+    {
+        res.status(500).json({data:[],error:err})
+    }
+})
+app.post("/sale",async(req,res)=>{
+    try{
+        const addsales=new sale(req.body)
+        await addsales.save()
+        res.json({success:true,data:addsales})
+    }
+    catch(err){
+        res.status(500).json({data:[],error:err})
+    }
+})
 //Getting the Inventory List
 app.get("/medlist",async(req,res)=>{
     try{
@@ -68,7 +177,20 @@ app.get("/medlist",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+//Length of medicine
 
+app.get("/medicinenumber",async(req,res)=>{
+    try{
+        var query = medicine.find();
+        query.count(function(err,count){
+          res.json({data:count})
+
+        });
+    }
+    catch(err){
+        res.status(500).json({data:[],error:err})
+    }
+})
 //Posting the inventory 
 app.post("/addmed",async(req,res)=>{
     try{
@@ -96,8 +218,6 @@ app.post("/adduser",async(req,res)=>{
 })
 
 
-// //Updating the patients
-app.put("/update")
 
 
 
