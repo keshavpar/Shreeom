@@ -46,6 +46,31 @@ app.get("/patientnumber",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+//Get Today Patient List
+app.get("/todaypat",async(Req,res)=>{
+    try{
+        const today=new Date()
+        to=today.toISOString()
+        t=to.split("T")
+        m=t[0]
+        const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const end = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+      console.log(start,end)
+        // Find documents with a timestamp between the start and end timestamps
+       var  k= await  patient.find({
+          Date: {
+            $gte: start,            
+          }
+        })
+        console.log(k)
+        res.json({success:true,data:k})
+    } 
+    catch(err){
+        res.status(500).json({data:[],error:err})
+    }
+
+})
+
 //Getting the Patients list
 app.get("/patientlist",async(req,res)=>{
     try{
@@ -55,6 +80,9 @@ app.get("/patientlist",async(req,res)=>{
     catch(err){
         res.status(500).json({data:[],error:err})
     }
+})
+app.get("/patientlist/todaypatients",async(req,res)=>{
+    console.log()
 })
 
 //Updating the Bill values
@@ -106,6 +134,7 @@ app.patch('/salesupdate/:id',async(req,res,next)=>{
 
     }
 })
+
 
 //Updating the Sales values
 app.patch('/patientsbillupdate/:id',async(req,res,next)=>{

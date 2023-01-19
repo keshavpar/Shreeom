@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const medicine = require('./medicine');
 const Schema = mongoose.Schema
 
-const Patients=new Schema({
+const Patients=new Schema({     
     uniqueid:{type:String,default:''},
     aadharnumber:{type:String,default:''},
     age:{type:Number,default:20},
