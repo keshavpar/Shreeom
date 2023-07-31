@@ -10,8 +10,8 @@ const Patients=new Schema({
     address:{type:String,default:''},
     fathersname:{type:String,default:''},
     occupation:{type:String,default:''},
-    bp:{type:String,default:0},
-    pulse:{type:Number,default:0},
+    // bp:{type:String,default:0},
+    // pulse:{type:Number,default:0},
     education:{type:String,default:''},
     city:{type:String,default:''},
     state:{type:String,default:''},
@@ -20,8 +20,8 @@ const Patients=new Schema({
     maritalstatus:{type:String,default:''},
     weight:{type:Number,default:''},
     gender:{type:String,default:'Male'},
-    jivha:{type:String,default:''},
-    Nadi:{type:String,default:''},
+    // jivha:{type:String,default:''},
+    // Nadi:{type:String,default:''},
     Date:{type:Date,default:Date.now},
     totalcap:{type:Number,default:0},
     captoday:{type:Number,default:0},
@@ -30,7 +30,8 @@ const Patients=new Schema({
     medicinelist:{type:Array,default:[]},
     price:{type:Array,default:[]},
     quantitymed:{type:Array,default:[]},
-    phonenumber:{type:Number,default:0}
+    phonenumber:{type:Number,default:0},
+    medicinalExaminations:{type:mongoose.Schema.Types.ObjectId,ref:'medicinalExamination',}
     })
 
     module.exports=mongoose.model("patients",Patients);    
