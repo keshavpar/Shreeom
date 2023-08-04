@@ -83,6 +83,18 @@ app.get("/patientlistpdf",async(req,res)=>{
     }
 })
 
+app.get("/patientlistpdf",async(req,res)=>{
+    try{
+        const proj={name:1,_id:0,address:1,state:1,Date:1,phonenumber:1}
+        const Patients=await patient.find({},proj);
+        res.send(Patients);
+        
+    }
+    catch(err){
+        console.log(err)
+    }
+})
+
 //Getting the Patients list
 app.get("/patientlist",async(req,res)=>{
     try{
