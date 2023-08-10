@@ -6,12 +6,15 @@ const connectionParams={
     useCreateIndex: true,
     useUnifiedTopology: true 
 }
+
 //models
 const medicine= require("./models/medicine")
 const patient  = require("./models/patients")
 const bill =require("./models/Bill")
 const sale=require("./models/sale")
-const app =express();
+const MedicalExamination = require("./models/doctor_examination");
+
+const app = express();
 app.use(express.json())
 
 mongoose.connect(process.env.DB_connection_String)
@@ -46,6 +49,7 @@ app.get("/patientnumber",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 //Get Today Patient List
 app.get("/todaypat",async(Req,res)=>{
     try{
@@ -105,6 +109,26 @@ app.get("/patientlist",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
+//medicalExam
+app.get('/medExam',async (req, res) => {
+    try{
+        const results = await MedicalExamination.find();
+        res.status(200).json({
+            status: "Success",
+            data: {
+                medExams: results
+            }
+        });
+    } catch (error){
+        res.status(400).json({
+            status:"Failed",
+            message: error.message
+        })
+    }
+    
+})
+
 app.get("/patientlist/todaypatients",async(req,res)=>{
     console.log()
 })
@@ -198,6 +222,7 @@ app.post("/bill",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 //app get Sales
 app.get("/sales",async(req,res)=>{
     try{
@@ -209,6 +234,7 @@ app.get("/sales",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 app.post("/sale",async(req,res)=>{
     try{
         const addsales=new sale(req.body)
@@ -219,6 +245,7 @@ app.post("/sale",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 //Getting the Inventory List
 app.get("/medlist",async(req,res)=>{
     try{
@@ -230,8 +257,8 @@ app.get("/medlist",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
-//Length of medicine
 
+//Length of medicine
 app.get("/medicinenumber",async(req,res)=>{
     try{
         var query = medicine.find();
@@ -244,6 +271,7 @@ app.get("/medicinenumber",async(req,res)=>{
         res.status(500).json({data:[],error:err})
     }
 })
+
 //Posting the inventory 
 app.post("/addmed",async(req,res)=>{
     try{
@@ -257,21 +285,19 @@ app.post("/addmed",async(req,res)=>{
 })
 
 
-
 //Posting the patients 
 app.post("/adduser",async(req,res)=>{
     try{
-        const addpatient= new patient(req.body)
-        await addpatient.save()
+        const addpatient = await patient.create(req.body);
         res.json({success:true,data:addpatient})
     }
     catch(err){
-        res.status(500).json({data:[],error:err})
+        res.status(500).json({
+            status: "Failed",
+            message: err.message
+        });
     }
 })
-
-
-
 
 
 //Deleting the patient using id
@@ -286,4 +312,3 @@ app.delete("/delpatient/:id",async(req,res)=>{
 
     }
 })
-

@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const medicine = require('./medicine');
-const Schema = mongoose.Schema
+const MedExam = require('./doctor_examination');
 
-const Patients=new Schema({     
+const Patients=new mongoose.Schema({     
     uniqueid:{type:String,default:''},
     aadharnumber:{type:String,default:'',uniqueid:true},
     age:{type:Number,default:20},
@@ -31,7 +31,34 @@ const Patients=new Schema({
     price:{type:Array,default:[]},
     quantitymed:{type:Array,default:[]},
     phonenumber:{type:Number,default:0},
-    medicinalExaminations:{type:mongoose.Schema.Types.ObjectId,ref:'medicinalExamination',}
-    })
+    medicinalExaminations:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'MedicinalExamination'
+        }
+    ],
+    medicalExaminationData: [{
+        Bp:{type:String,default:""},
+        Pulse:{type:String,default:""},
+        Nadi:{type:String,default:""},
+        Jivha:{type:String,default:""},
+        time:{type:Date,default:Date.now},
+        doctorName:{type:String,default:""},
+        capgiven:{type:Number,default:0},
+        findings:{type:String,default:""}
+    }]
+})
 
-    module.exports=mongoose.model("patients",Patients);    
+Patients.pre('save', async function(next){
+    try{
+        const ids = await MedExam.insertMany(this.medicalExaminationData);
+        this.medicalExaminationData = undefined;
+        this.medicinalExaminations = ids;
+        return next();
+    } catch (error) {
+        console.log(error);
+        next();
+    }
+});
+
+module.exports=mongoose.model("patients",Patients);    
