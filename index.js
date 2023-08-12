@@ -275,7 +275,7 @@ app.get("/medicinenumber",async(req,res)=>{
 //Posting the inventory 
 app.post("/addmed",async(req,res)=>{
     try{
-        const addmed=new medicine(req.body)
+        const addmed = await medicine.create(req.body)
         await addmed.save()
         res.json({success:true,data:addmed})
     }
