@@ -1,6 +1,10 @@
 const Patient = require('./../models/patients');
+const Medicines = require('./../models/medicine');
+const MedExams = require('./../models/doctor_examination');
+
 const aysncErrorHandler = require('./../utils/asyncErrorHandler');
 const CustomError = require('./../utils/customError');
+const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
 exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patientnumber"
 
@@ -19,7 +23,7 @@ exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patie
 exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/todaypat"
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set time to midnight 
+    today.setHours(0, 0, 0, 0); // Set time to midnight
     // For Ex: Today is 23rd So all patients within Date : 23 - time: 12:00AM <=> Date: 24 - time: 12:00AM
     const nextDay = new Date(today);
     nextDay.setDate(nextDay.getDate() + 1);
@@ -29,6 +33,8 @@ exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/tod
 
     res.status(200).json({
         staus: "Success",
+        Count: todaysPatients.length,
+        Date: today.toISOString().split('T')[0],
         data: {
             patients: todaysPatients
         }
@@ -41,6 +47,7 @@ exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patien
     
     res.status(200).json({
         status: "Success",
+        Count: patients.length,
         data: {
             patients
         }
@@ -56,6 +63,7 @@ exports.patientList = aysncErrorHandler( async(req, res, next)=>{ // "/patientli
         // '-' before the field name means exclude 
     res.status(200).json({
         status: "Success",
+        Count: patients.length,
         data: {
             patients
         }
@@ -80,19 +88,30 @@ exports.addPatient = aysncErrorHandler( async(req, res, next)=>{ // "/addpatient
 //Deleting the patient using id
 exports.deletePatient = aysncErrorHandler( async(req, res, next)=>{  // "/delpatient/:id"
     
-    const deletedPatient = await Patient.findByIdAndDelete(req.params.id);
+    const deletedPatient = await Patient.findById(req.params.id);
 
     if(!deletedPatient){
-        const err = new CustomError('Patent with that ID is not found!', 404);
+        const err = new CustomError(`Patient with _id:${req.params.id} is not found!`, 404);
         return next(err);
     }
+
+    if(deletedPatient.medicalExams.length){
+        const medExamIds = deletedPatient.medicalExams;
+        
+        await MedExams.deleteMany({_id: { $in: medExamIds } });
+    }
+
+    if (deletedPatient.medicinelist.length) {
+        const medicineIds = deletedPatient.medicinelist;
+    
+        await Medicines.deleteMany({ _id: { $in: medicineIds } });
+    }
+
+    await Patient.deleteOne({_id: deletedPatient._id});
 
     res.status(204).json({
         status: "Success",
         data: null
     });  
 
-    // ???
-    // As deleting a patient,
-    // the medicines and medicalExams should also be deleted simaltaneously related to that patient
 })

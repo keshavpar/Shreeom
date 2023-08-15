@@ -239,8 +239,8 @@ module.exports = mongoose.model("Patient",patients);
 
   Using References to seperate collections instead of embedding the collections into one is actually a tradeoff between Time and Space
   If there will be not more than 15 - 20 Medicines or 15 - 20 medExams. We should go for embedding all into Patient Model.
-  Querying throught referenced structure takes more time. 
-  Embedding into one takes more space. (But in mongodb we have a limit of one collection of aprx 15Mb)
+  Querying through referenced structure takes more time. 
+  Embedding into one takes more space. (But in mongodb we have a limit of one document of aprx 15Mb)
   
 
   If there's not a huge number of medExams or meds, we should embed it into one collection. For which querying will be optimized

@@ -5,38 +5,32 @@ const bill = require("./models/Bill")
 const sale = require("./models/sale")
 const MedicalExamination = require("./models/doctor_examination");
 
+/*
+$$$$$$$$$$$$$$$$$$$$$$$$ More to IMPLEMENT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+************************************************************************
 
-// MedicalExam
-// app.get('/medExam',async (req, res) => {
-//     try{
-//         const results = await MedicalExamination.find();
-//         res.status(200).json({
-//             status: "Success",
-//             data: {
-//                 medExams: results
-//             }
-//         });
-//     } catch (error){
-//         res.status(400).json({
-//             status:"Failed",
-//             message: error.message
-//         })
-//     }
-// })
+(1) Adding Patient (Without any medExms or meds) After adding Patient,
+    need to add more new meds or add more medExms
+
+(2) Increment or Decrement the Quantity of a particular Medicine of particular patient
+
+(3) Add or delete some medicines or medExms of a particular patient
+
+(All the above will be easy to implement if we embed the documents instead of referencing with different collections)
+
+(4) Adding Search Functionality acc to locations (can be done with Aggregation Pipeline)
+
+(5) Fetch and search list of patients on given date, month and year
+    ( 
+        From frontend embed the date, month and year parameter into url's query part so we can get it
+        here from req.params.date, req.params.month, req.params.year
+    )
+
+************************************************************************
+*/
 
 
-// Medicines
-//Getting the Inventory List
-// app.get("/medlist",async(req,res)=>{
-//     try{
-//         const medicinelist=await medicine.find()
-//         res.json({success:true,data:medicinelist})
-//     }
-//     catch(err)
-//     {
-//         res.status(500).json({data:[],error:err})
-//     }
-// })
+
 
 //Updating the Bill values
 app.patch('/patientsbillupdate/:id',async(req,res,next)=>{
@@ -70,16 +64,3 @@ app.patch('/patientsbillupdate/:id',async(req,res,next)=>{
 
     }
 })
-
-
-//Posting the inventory 
-// app.post("/addmed",async(req,res)=>{
-//     try{
-//         const addmed = await medicine.create(req.body)
-//         await addmed.save()
-//         res.json({success:true,data:addmed})
-//     }
-//     catch(err){
-//         res.status(500).json({data:[],error:err})
-//     }
-// })
