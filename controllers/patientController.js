@@ -43,7 +43,29 @@ exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/tod
 
 exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
     
-    const patients = await Patient.find({}).select('-_id name address state Date phonenumber');
+    const patients = await Patient.aggregate([
+        {
+            $group: { 
+                _id: { // Still some typos 'Fatehbad' and 'Fatehabad' will be different 
+                    city: { $toLower: { $trim: { input: '$city' } } },// 'Haryana' <=> 'haryana' (so first lowercase all)
+                    state: { $toLower: { $trim: { input: '$state' } } },// 'Harayana' <=> 'Harayana_' (trim the extra space)
+                },
+                patients: {
+                    $push: {
+                        name: '$name',
+                        fathersname: '$fathersname',
+                        phonenumber: '$phonenumber',
+                        aadharnumber: '$aadharnumber',
+                        Date: '$Date',
+                        address: '$address',
+                        state: '$state',
+                        city: '$city',
+                    }
+                },
+                count: { $sum: 1 }
+            }
+        }
+    ]);
     
     res.status(200).json({
         status: "Success",

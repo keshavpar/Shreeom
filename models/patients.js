@@ -21,14 +21,17 @@ const patients = new mongoose.Schema({
     },
     address: {
         type: String,
+        trim: true,
         default: ''
     },
     fathersname: {
         type: String,
+        trim: true,
         default: ''
     },
     occupation: {
         type: String,
+        trim: true,
         default: ''
     },
     /* bp: {
@@ -42,14 +45,17 @@ const patients = new mongoose.Schema({
     */
     education: {
         type: String,
+        trim: true,
         default: ''
     },
     city: {
         type: String,
+        trim: true,
         default: ''
     },
     state: {
         type: String,
+        trim: true,
         default: ''
     },
     addictionperiod: {
@@ -103,7 +109,8 @@ const patients = new mongoose.Schema({
         default: Date.now()
     },
     phonenumber: {
-        type: String
+        type: String,
+        trime: true
     },
     medicinelist: [
         {
