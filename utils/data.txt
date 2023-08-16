@@ -1,5 +1,5 @@
 {
-      "medicalExamData": [
+      "medicalExams": [
         {
           "Bp":"pqr",
           "Pulse":"pqr",
@@ -17,7 +17,7 @@
           "findings":"ijk"
         }
       ],
-      "medicineData": [
+      "medicinelist": [
         {
           "name":"abc",
           "opiumated":true,

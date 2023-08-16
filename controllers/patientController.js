@@ -1,12 +1,9 @@
 const Patient = require('./../models/patients');
-const Medicines = require('./../models/medicine');
-const MedExams = require('./../models/doctor_examination');
 
-const aysncErrorHandler = require('./../utils/asyncErrorHandler');
 const CustomError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patientnumber"
+exports.countAllPatients = asyncErrorHandler(async(req, res, next)=>{ // "/patientnumber"
 
     const count = await Patient.countDocuments({});
 
@@ -20,7 +17,7 @@ exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patie
 })
 
 //Get Today Patient List
-exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/todaypat"
+exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/todaypat"
 
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set time to midnight
@@ -41,7 +38,7 @@ exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/tod
     });
 })
 
-exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
+exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
     
     const patients = await Patient.aggregate([
         {
@@ -77,7 +74,7 @@ exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patien
 })
 
 //Getting the Patients list
-exports.patientList = aysncErrorHandler( async(req, res, next)=>{ // "/patientlist"
+exports.patientList = asyncErrorHandler( async(req, res, next)=>{ // "/patientlist"
     
     const patients = await Patient.find({})
         .sort({ Date: -1 }) // Sort by Date in descending order (most recent first)
@@ -94,7 +91,7 @@ exports.patientList = aysncErrorHandler( async(req, res, next)=>{ // "/patientli
 })
 
 //Posting the patients 
-exports.addPatient = aysncErrorHandler( async(req, res, next)=>{ // "/addpatient"
+exports.addPatient = asyncErrorHandler( async(req, res, next)=>{ // "/addpatient"
 
     const addpatient = await Patient.create(req.body);
 
@@ -108,28 +105,14 @@ exports.addPatient = aysncErrorHandler( async(req, res, next)=>{ // "/addpatient
 })
 
 //Deleting the patient using id
-exports.deletePatient = aysncErrorHandler( async(req, res, next)=>{  // "/delpatient/:id"
+exports.deletePatient = asyncErrorHandler( async(req, res, next)=>{  // "/delpatient/:id"
     
-    const deletedPatient = await Patient.findById(req.params.id);
+    let deletedPatient = await Patient.findByIdAndDelete(req.params.id);
 
     if(!deletedPatient){
         const err = new CustomError(`Patient with _id:${req.params.id} is not found!`, 404);
         return next(err);
     }
-
-    if(deletedPatient.medicalExams.length){
-        const medExamIds = deletedPatient.medicalExams;
-        
-        await MedExams.deleteMany({_id: { $in: medExamIds } });
-    }
-
-    if (deletedPatient.medicinelist.length) {
-        const medicineIds = deletedPatient.medicinelist;
-    
-        await Medicines.deleteMany({ _id: { $in: medicineIds } });
-    }
-
-    await Patient.deleteOne({_id: deletedPatient._id});
 
     res.status(204).json({
         status: "Success",

@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-const Medicine = require('./medicine');
-const MedExam = require('./doctor_examination');
 
 const patients = new mongoose.Schema({     
     aadharnumber: {
@@ -112,12 +110,6 @@ const patients = new mongoose.Schema({
         type: String,
         trime: true
     },
-    medicinelist: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Medicine'
-        }
-    ], 
     price: {// Total Price of all Meds : { (Qt0 * Prc0) + (Qt1 * Prc1) + ... }
         type: Number,// OR Individual Price of meds [ Prc0, Prc1, ... ]
         default: 0 // OR Individual Price of all Meds (Price * Quants) [ (Qt0 * Prc0), (Qt1 * Prc1), .. ]
@@ -126,7 +118,7 @@ const patients = new mongoose.Schema({
         type: Number,// OR Individual Quantity of meds [ Qt0, Qt1, ... ]
         default: 0
     }, 
-    medicineData:{
+    medicinelist:{
         type: [
             {
                 name: {
@@ -171,16 +163,9 @@ const patients = new mongoose.Schema({
                     default:0
                 }
             }
-        ],
-        select: false // Hiding this field
+        ]
     },
-    medicalExams:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'MedicalExam'
-        }
-    ],
-    medicalExamData: {
+    medicalExams: {
         type: [
             {
                 Bp: {
@@ -216,27 +201,10 @@ const patients = new mongoose.Schema({
                     default:""
                 }
             }
-        ],
-        select: false // Hiding this field
-    }
-})
-
-patients.pre('save', async function(next){
-    try{
-        const ids = await MedExam.insertMany(this.medicalExamData);
-        this.medicalExamData = undefined;
-        this.medicalExams = ids;
-
-        const medIds = await Medicine.insertMany(this.medicineData);
-        this.medicineData = undefined;
-        this.medicinelist = medIds;
-        
-        return next();
-    } catch (error) {
-        console.log(error);
-        next();
+        ]
     }
 });
+
 
 module.exports = mongoose.model("Patient",patients);    
 
