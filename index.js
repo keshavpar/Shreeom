@@ -26,6 +26,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$ More to IMPLEMENT $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         here from req.params.date, req.params.month, req.params.year
     )
 
+(6) Search list of patients with group by state or city
+        a) Only State (State)
+        b) State with City ( two state may have same name of city ) (State & City)
+
 ************************************************************************
 */
 

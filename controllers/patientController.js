@@ -1,12 +1,9 @@
 const Patient = require('./../models/patients');
-const Medicines = require('./../models/medicine');
-const MedExams = require('./../models/doctor_examination');
 
-const aysncErrorHandler = require('./../utils/asyncErrorHandler');
 const CustomError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patientnumber"
+exports.countAllPatients = asyncErrorHandler(async(req, res, next)=>{ // "/patientnumber"
 
     const count = await Patient.countDocuments({});
 
@@ -20,7 +17,7 @@ exports.countAllPatients = aysncErrorHandler(async(req, res, next)=>{ // "/patie
 })
 
 //Get Today Patient List
-exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/todaypat"
+exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/todaypat"
 
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Set time to midnight
@@ -41,9 +38,31 @@ exports.todayPatientList = aysncErrorHandler (async (req, res, next)=>{ // "/tod
     });
 })
 
-exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
+exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
     
-    const patients = await Patient.find({}).select('-_id name address state Date phonenumber');
+    const patients = await Patient.aggregate([
+        {
+            $group: { 
+                _id: { // Still some typos 'Fatehbad' and 'Fatehabad' will be different 
+                    city: { $toLower: { $trim: { input: '$city' } } },// 'Haryana' <=> 'haryana' (so first lowercase all)
+                    state: { $toLower: { $trim: { input: '$state' } } },// 'Harayana' <=> 'Harayana_' (trim the extra space)
+                },
+                patients: {
+                    $push: {
+                        name: '$name',
+                        fathersname: '$fathersname',
+                        phonenumber: '$phonenumber',
+                        aadharnumber: '$aadharnumber',
+                        Date: '$Date',
+                        address: '$address',
+                        state: '$state',
+                        city: '$city',
+                    }
+                },
+                count: { $sum: 1 }
+            }
+        }
+    ]);
     
     res.status(200).json({
         status: "Success",
@@ -55,7 +74,7 @@ exports.patientListPdf = aysncErrorHandler( async(req, res, next)=>{ // "/patien
 })
 
 //Getting the Patients list
-exports.patientList = aysncErrorHandler( async(req, res, next)=>{ // "/patientlist"
+exports.patientList = asyncErrorHandler( async(req, res, next)=>{ // "/patientlist"
     
     const patients = await Patient.find({})
         .sort({ Date: -1 }) // Sort by Date in descending order (most recent first)
@@ -72,7 +91,7 @@ exports.patientList = aysncErrorHandler( async(req, res, next)=>{ // "/patientli
 })
 
 //Posting the patients 
-exports.addPatient = aysncErrorHandler( async(req, res, next)=>{ // "/addpatient"
+exports.addPatient = asyncErrorHandler( async(req, res, next)=>{ // "/addpatient"
 
     const addpatient = await Patient.create(req.body);
 
@@ -86,28 +105,14 @@ exports.addPatient = aysncErrorHandler( async(req, res, next)=>{ // "/addpatient
 })
 
 //Deleting the patient using id
-exports.deletePatient = aysncErrorHandler( async(req, res, next)=>{  // "/delpatient/:id"
+exports.deletePatient = asyncErrorHandler( async(req, res, next)=>{  // "/delpatient/:id"
     
-    const deletedPatient = await Patient.findById(req.params.id);
+    let deletedPatient = await Patient.findByIdAndDelete(req.params.id);
 
     if(!deletedPatient){
         const err = new CustomError(`Patient with _id:${req.params.id} is not found!`, 404);
         return next(err);
     }
-
-    if(deletedPatient.medicalExams.length){
-        const medExamIds = deletedPatient.medicalExams;
-        
-        await MedExams.deleteMany({_id: { $in: medExamIds } });
-    }
-
-    if (deletedPatient.medicinelist.length) {
-        const medicineIds = deletedPatient.medicinelist;
-    
-        await Medicines.deleteMany({ _id: { $in: medicineIds } });
-    }
-
-    await Patient.deleteOne({_id: deletedPatient._id});
 
     res.status(204).json({
         status: "Success",

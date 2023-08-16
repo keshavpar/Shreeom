@@ -1,57 +1,46 @@
-const mongoose = require('mongoose');
 const Patient = require('./../models/patients');
 
 const CustomError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-exports.medExam = asyncErrorHandler( async (req, res, next) => {
+exports.medExam = asyncErrorHandler( async (req, res, next) => { // List of all medical Exams of a patinet
+
     const patient = await Patient.findById(req.params.id);
 
-    if(!patient) {
-        const err = new CustomError(`Patient with this id:${req.params.id} not found! :(`, 404);
-        return next(err);
+    if(!patient){
+        next (new CustomError(`No Patient found with this _id:${req.params.id}`));
     }
 
-    const pipeline = [
-        {
-            $match: { _id: mongoose.Types.ObjectId(req.params.id) }
-        },
-        {
-            $lookup: {
-                from: 'medicalexams',
-                localField: 'medicalExams',
-                foreignField: '_id',
-                as: 'medExams'
-            },
-        },
-        {
-            $unwind: '$medExams'
-        },
-        {
-            $project: {
-                Bp: '$medExams.Pp',
-                Pulse: '$medExams.Pulse',
-                Nadi: '$medExams.Nadi',
-                Jivha: '$medExams.Jivha',
-                time: '$medExams.time',
-                doctorName: '$medExams.doctorName',
-                capgiven: '$medExams.capgiven',
-                findings: '$medExams.findings'
-            }
-        }
-    ]
-
-    const medicalExams = await Patient.aggregate(pipeline);
     res.status(200).json({
         status: "Success",
-        No_Of_Exams: patient.medicalExams.length,
         data: {
-            Patient: {
-                Patient_Name: patient.name,
-                FathersName: patient.fathersname,
-                Contact: patient.phonenumber,
-            },
-            medicalExams
+            medicalExams: patient.medicalExams
         }
     });
 })
+
+exports.updateMedExams = asyncErrorHandler( async (req, res, next) => { // Adding medicalExams for a Patient
+
+    const patient = await Patient.findByIdAndUpdate(req.body.id,
+        {
+            $push: {
+                medicalExams: {
+                    $each: req.body.medicalExams,
+                },
+            },
+        },
+        { new: true , runValidators: true }
+    );
+    
+    if(!patient){
+        const err = new CustomError(`No Patient found with this _id:${req.params.id}`);
+        return next(err);
+    }
+
+    res.status(200).json({
+        status: "Success",
+        data: {
+            patient
+        }
+    });
+}) 

@@ -1,62 +1,50 @@
-const mongoose = require('mongoose');
 const Patient = require('./../models/patients');
 
 const CustomError = require('./../utils/customError');
 const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
-exports.medicines = asyncErrorHandler( async (req, res, next) => {
+exports.medicines = asyncErrorHandler( async (req, res, next) => { // List of Medicines of a Patient
     const patient = await Patient.findById(req.params.id);
 
-    if(!patient) {
-        const err = new CustomError(`Patient with this id:${req.params.id} not found! :(`, 404);
-        return next(err);
+    if(!patient){
+        next (new CustomError(`No Patient found with this _id:${req.params.id}`));
     }
 
-    const pipeline = [
-        {
-            $match: { _id: mongoose.Types.ObjectId(req.params.id) }
-        },
-        {
-            $lookup: {
-                from: 'medicines',
-                localField: 'medicinelist',
-                foreignField: '_id',
-                as: 'meds'
-            },
-        },
-        {
-            $unwind: '$meds'
-        },
-        {
-            $project: {
-                name: '$meds.name',
-                opiumated: '$meds.opiumated',
-                description: '$meds.description',
-                batch_no: '$meds.batch_no',
-                price: '$meds.price',
-                cgst: '$meds.cgst',
-                sgst: '$meds.sgst',
-                mfg_date: '$meds.mfg_date',
-                expiry_date: '$meds.expiry_date',
-                quantity: '$meds.quantity'
-            }
-        }
-    ]
-
-    const medicines = await Patient.aggregate(pipeline);
     res.status(200).json({
         status: "Success",
-        No_Of_Meds: patient.medicinelist.length,
         data: {
-            Patient: {
-                Patient_Name: patient.name,
-                FathersName: patient.fathersname,
-                Contact: patient.phonenumber
-            },
-            medicines
+            medicines: patient.medicinelist
         }
     });
 })
+
+
+exports.updateMeds = asyncErrorHandler( async (req, res, next) => { // Adding More Medicines for a Patient
+
+    const patient = await Patient.findByIdAndUpdate(req.body.id,
+        {
+            $push: {
+                medicinelist: {
+                    $each: req.body.medicinelist,
+                },
+            },
+        },
+        { new: true, runValidators: true }
+    );
+
+    if(!patient){
+        const err = new CustomError(`No Patient found with this _id:${req.params.id}`);
+        return next(err);
+    }
+
+    res.status(200).json({
+        status: "Success",
+        data: {
+            patient
+        }
+    });
+}) 
+
 
 //Length of medicine
 // app.get("/medicinenumber",async(req,res)=>{
