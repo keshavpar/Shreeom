@@ -1,4 +1,5 @@
 const express = require('express');
+const morgan = require('morgan');
 
 const CustomError = require('./utils/customError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -10,6 +11,10 @@ const medicinesRouter = require('./routes/medicineRoute');
 const app = express();
 
 app.use(express.json());
+
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'));
+}
 
 //Default Page
 app.get("/",(req,res)=>{
