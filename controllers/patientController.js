@@ -40,6 +40,24 @@ exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/tod
 
 exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patientlistpdf"
     
+    const cityMappings = {
+        "hanumangrah": "hanumangarh",
+        "Hanumangrah": "hanumangarh",
+        "fatehbad": "fatehabad",
+        "Fatehbad": "fatehabad"
+        // Add more mappings as needed
+    };
+    
+    for (const incorrectCity in cityMappings) {
+        const correctCity = cityMappings[incorrectCity];
+    
+        // Update documents with incorrect city name to use the correct city name
+        await Patient.updateMany({ city: incorrectCity }, { $set: { city: correctCity } });
+    }
+    
+        // Similarly make the State mappings and update it ¯\_(ツ)_/¯
+
+
     const patients = await Patient.aggregate([
         {
             $group: { 
