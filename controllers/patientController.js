@@ -44,6 +44,8 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
         "hanumangrah": "hanumangarh",
         "Hanumangrah": "hanumangarh",
         "fatehbad": "fatehabad",
+        "fehatabad": "fatehabad",
+        "Fehatabad": "fatehabad",
         "Fatehbad": "fatehabad"
         // Add more mappings as needed
     };
@@ -56,6 +58,24 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
     }
     
         // Similarly make the State mappings and update it ¯\_(ツ)_/¯
+
+        const StateMappings = {
+            "haryan": "haryana",
+            "Haryan": "haryana",
+            "harayana": "haryana",
+            "Harayana": "haryana",
+            "rajsthan": "rajasthan",
+            "Rajsthan": "rajasthan",
+            "Rajasthanq": "rajasthan"
+            // Add more mappings as needed
+        };
+        
+        for (const incorrectState in StateMappings) {
+            const correctState = StateMappings[incorrectState];
+        
+            // Update documents with incorrect city name to use the correct city name
+            await Patient.updateMany({ state: incorrectState }, { $set: { state: correctState } });
+        }
 
 
     const patients = await Patient.aggregate([
