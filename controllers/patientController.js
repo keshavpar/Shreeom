@@ -30,7 +30,7 @@ exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/tod
 
     res.status(200).json({
         staus: "Success",
-        Count: todaysPatients.length,
+        // Count: todaysPatients.length,
         Date: today.toISOString().split('T')[0],
         data: {
             patients: todaysPatients
@@ -135,7 +135,7 @@ exports.patientList = asyncErrorHandler( async(req, res, next)=>{ // "/patientli
         // '-' before the field name means exclude 
     res.status(200).json({
         status: "Success",
-        Count: patients.length,
+        // Count: patients.length,
         data: {
             patients
         }
