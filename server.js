@@ -14,7 +14,8 @@ mongoose.connect(process.env.DB_connection_String, {
 
 console.log(process.NODE_ENV)
 const port = process.env.PORT;
+const dport=process.env.DEVELOPMENTPORT
 
-app.listen(port,()=>{
-    console.log(`Server is running on ${port}... :) `);
+app.listen(dport,()=>{
+    console.log(`Server is running on ${dport}... :) `);
 })
