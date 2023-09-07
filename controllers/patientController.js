@@ -31,7 +31,7 @@ exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/tod
     res.status(200).json({
         staus: "Success",
         // Count: todaysPatients.length,
-        Date: today.toISOString().split('T')[0],
+        // Date: today.toISOString().split('T')[0],
         data: {
             patients: todaysPatients
         }
