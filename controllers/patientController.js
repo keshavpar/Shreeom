@@ -30,8 +30,8 @@ exports.todayPatientList = asyncErrorHandler (async (req, res, next)=>{ // "/tod
 
     res.status(200).json({
         staus: "Success",
-        Count: todaysPatients.length,
-        Date: today.toISOString().split('T')[0],
+        // Count: todaysPatients.length,
+        // Date: today.toISOString().split('T')[0],
         data: {
             patients: todaysPatients
         }
@@ -44,19 +44,34 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
         "hanumangrah": "hanumangarh",
         "Hanumangrah": "hanumangarh",
         "fatehbad": "fatehabad",
-        "fehatabad": "fatehabad",
-        "Fehatabad": "fatehabad",
-        "Fatehbad": "fatehabad"
+        "Fatehbad": "fatehabad",
+        "Gangangar":"Ganganagar",
+        "Ganagangar":"Ganganagar",
+        "Bhatinda":"Bhathinda",
+        "Hanuangarh":"Hanumangarh",
+        "hamunngrah":"Hanumangarh"
         // Add more mappings as needed
     };
-    
+    const stateMappings={
+        "Haryan":"Haryana",
+        "Harayana":"Haryana",
+        "raasthan":"Rajasthan",
+        "hryana":"Haryana",
+        "haryan":"Haryana",
+        "Rjasthan":"Rajasthan"
+        }
     for (const incorrectCity in cityMappings) {
         const correctCity = cityMappings[incorrectCity];
     
         // Update documents with incorrect city name to use the correct city name
         await Patient.updateMany({ city: incorrectCity }, { $set: { city: correctCity } });
     }
+    for (const incorrectState in stateMappings) {
+        const correctState = stateMappings[incorrectState];
     
+        // Update documents with incorrect city name to use the correct city name
+        await Patient.updateMany({ state: incorrectState }, { $set: { state: correctState } });
+    }
         // Similarly make the State mappings and update it ¯\_(ツ)_/¯
 
         const StateMappings = {
@@ -120,7 +135,7 @@ exports.patientList = asyncErrorHandler( async(req, res, next)=>{ // "/patientli
         // '-' before the field name means exclude 
     res.status(200).json({
         status: "Success",
-        Count: patients.length,
+        // Count: patients.length,
         data: {
             patients
         }
