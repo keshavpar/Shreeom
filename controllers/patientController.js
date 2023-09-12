@@ -73,7 +73,7 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
         for (const incorrectState in StateMappings) {
             const correctState = StateMappings[incorrectState];
         
-            // Update documents with incorrect city name to use the correct city name
+            // Update documents with incorrect state name to use the correct state name
             await Patient.updateMany({ state: incorrectState }, { $set: { state: correctState } });
         }
 
