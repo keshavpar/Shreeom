@@ -36,17 +36,20 @@ exports.login = asyncErrorHandler( async (req, res, next) => {
     // 1. Check if user email or password present in request body or not
     const email = req.body.email;
     const password = req.body.password;
-
+    console.log(email,password)
     if(!email || !password){
         next(new CustomError("Use valid credentials to login ! "));
     }
 
     // 2. Check if user exists with gievn mail
+    const user = await User.findOne({email}).select('+password');
 
     // 3. match the passwords
-
+    if(!user || user.comparePasswordsinDB(password, user.password)){
+        next(new CustomError("User with this credentials didn't found"))
+    }
     // 4. send jwt token
+    createSendToken(user, 200, res);
 
     // 5. Logged In
-
 })
