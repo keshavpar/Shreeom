@@ -74,24 +74,6 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
     }
         // Similarly make the State mappings and update it ¯\_(ツ)_/¯
 
-        const StateMappings = {
-            "haryan": "haryana",
-            "Haryan": "haryana",
-            "harayana": "haryana",
-            "Harayana": "haryana",
-            "rajsthan": "rajasthan",
-            "Rajsthan": "rajasthan",
-            "Rajasthanq": "rajasthan"
-            // Add more mappings as needed
-        };
-        
-        for (const incorrectState in StateMappings) {
-            const correctState = StateMappings[incorrectState];
-        
-            // Update documents with incorrect state name to use the correct state name
-            await Patient.updateMany({ state: incorrectState }, { $set: { state: correctState } });
-        }
-
 
     const patients = await Patient.aggregate([
         {
@@ -110,6 +92,7 @@ exports.patientListPdf = asyncErrorHandler( async(req, res, next)=>{ // "/patien
                         address: '$address',
                         state: '$state',
                         city: '$city',
+                        quantity: '$quantity'
                     }
                 },
                 count: { $sum: 1 }
