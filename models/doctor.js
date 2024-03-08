@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
 
 // name; registration No.; BOARD; Degree; Address; PhoneNumber
 const doctorSchema = new mongoose.Schema({

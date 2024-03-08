@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
 
 const patients = new mongoose.Schema({     
     aadharnumber: {
