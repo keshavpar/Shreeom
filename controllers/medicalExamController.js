@@ -5,10 +5,10 @@ const asyncErrorHandler = require('./../utils/asyncErrorHandler');
 
 exports.medExam = asyncErrorHandler( async (req, res, next) => { // List of all medical Exams of a patinet
 
-    const patient = await Patient.findById(req.params.id);
+    const patient = await Patient.findById(req.params.patientId);
 
     if(!patient){
-        next (new CustomError(`No Patient found with this _id:${req.params.id}`));
+        next (new CustomError(`No Patient found with this _id:${req.params.patientId}`));
     }
 
     res.status(200).json({
@@ -21,7 +21,7 @@ exports.medExam = asyncErrorHandler( async (req, res, next) => { // List of all 
 
 exports.updateMedExams = asyncErrorHandler( async (req, res, next) => { // Adding medicalExams for a Patient
 
-    const patient = await Patient.findByIdAndUpdate(req.body.id,
+    const patient = await Patient.findByIdAndUpdate(req.params.patientId,
         {
             $push: {
                 medicalExams: {
@@ -33,7 +33,7 @@ exports.updateMedExams = asyncErrorHandler( async (req, res, next) => { // Addin
     );
     
     if(!patient){
-        const err = new CustomError(`No Patient found with this _id:${req.params.id}`);
+        const err = new CustomError(`No Patient found with this _id:${req.params.patientId}`);
         return next(err);
     }
 
